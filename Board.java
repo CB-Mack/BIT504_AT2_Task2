@@ -116,5 +116,13 @@ public class Board {
         }
     }
 
+    /** Clear the content of all cells in the board */
+    public void clearBoard() {
+        for (int row = 0; row < GameMain.ROWS; row++) {
+            for (int col = 0; col < GameMain.COLS; col++) {
+                cells[row][col].clear(); // Reset cell content to Empty
+            }
+        }
+    }
 
 }

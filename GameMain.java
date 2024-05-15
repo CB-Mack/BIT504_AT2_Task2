@@ -16,6 +16,14 @@ public class GameMain extends JPanel implements MouseListener {
     public static final int SYMBOL_SIZE = CELL_SIZE - CELL_PADDING * 2;
     public static final int SYMBOL_STROKE_WIDTH = 8;
 
+    // Enumeration for game states
+    enum GameState {
+        Playing,
+        Draw,
+        Cross_won,
+        Nought_won
+    }
+    
     // Game object variables
     private Board board;
     private GameState currentState;
@@ -80,13 +88,13 @@ public class GameMain extends JPanel implements MouseListener {
             }
         } else if (currentState == GameState.Draw) {
             statusBar.setForeground(Color.RED);
-            statusBar.setText("It's a Draw ¯\\_(ツ)_/¯! Click to play again.");
+            statusBar.setText("It's a Draw :( Click to play again.");
         } else if (currentState == GameState.Cross_won) {
             statusBar.setForeground(Color.RED);
-            statusBar.setText("'X' Won ദ്ദി(•̀ ᴗ -)! Click to play again.");
+            statusBar.setText("'X' Won :) Click to play again.");
         } else if (currentState == GameState.Nought_won) {
             statusBar.setForeground(Color.RED);
-            statusBar.setText("'O' Won (ˆᗜˆ)! Click to play again.");
+            statusBar.setText("'O' Won :) Click to play again.");
         }
     }
 
@@ -106,29 +114,44 @@ public class GameMain extends JPanel implements MouseListener {
             }
         } else if (board.isDraw()) {
             currentState = GameState.Draw;
+        } else {
+            currentState = GameState.Playing;
         }
     }
 
 
     public void mouseClicked(MouseEvent e) {
+        // Get the coordinates of the mouse click
         int mouseX = e.getX();
         int mouseY = e.getY();
+        
+        // Convert mouse coordinates to row and column indices
         int rowSelected = mouseY / CELL_SIZE;
         int colSelected = mouseX / CELL_SIZE;
 
+        // Check if the game is still in progress
         if (currentState == GameState.Playing) {
+            // Check if the selected cell is within the board bounds and is empty
             if (rowSelected >= 0 && rowSelected < ROWS && colSelected >= 0 && colSelected < COLS
                     && board.cells[rowSelected][colSelected].content == Player.Empty) {
+                // Set the content of the selected cell to the current player's symbol
                 board.cells[rowSelected][colSelected].content = currentPlayer;
+                
+                // Update the game state based on the current player's move
                 updateGame(currentPlayer, rowSelected, colSelected);
+                
+                // Switch to the next player
                 currentPlayer = (currentPlayer == Player.Cross) ? Player.Nought : Player.Cross;
             }
         } else {
+            // If the game is over, restart the game
             initGame();
         }
 
+        // Repaint the panel to reflect the changes
         repaint();
     }
+
 
     @Override
     public void mousePressed(MouseEvent e) {
